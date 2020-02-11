@@ -1,10 +1,12 @@
-mod fs;
+extern crate fat_fs;
+
+
 mod image;
 
-use fs::Fs;
-use fs::storage_io::StorageIo;
-use fs::stream::StreamPos;
-use fs::dir::Dir;
+use fat_fs::Fs;
+use fat_fs::storage_io::StorageIo;
+//use fat_fs::stream::StreamPos;
+use fat_fs::dir::Dir;
 //use fs::dir_reader::DirEntry;
 use std::fs::File;
 use std::io::prelude::*;
@@ -35,6 +37,7 @@ fn print_tree<T: StorageIo>(fs: &Fs<T> ,dir: Dir<T>, level: usize) {
 }
 
 fn main() {
+    /*
     let images = vec!("fat32", "fat16", "fat12");
     
     for image in images {
@@ -62,12 +65,12 @@ fn main() {
 
         file.close();
     }
+    */
     
-    /*
-    let img = image::new("F:/stay-on-main/fat32.img");
+    let img = image::new("D:/Vadym/disk3.img");
     let fs = Fs::new(img).unwrap();
     print_tree(&fs, fs.root_dir(), 0);
-
+    /*
     let img = image::new("F:/stay-on-main/fat16.img");
     let fs = Fs::new(img).unwrap();
     print_tree(&fs, fs.root_dir(), 0);

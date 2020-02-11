@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{ Read, Seek, SeekFrom, Write };
 use core::cell::{RefCell};
-pub use crate::fs::storage_io::StorageIo;
+pub use super::fat_fs::storage_io::StorageIo;
 use core::ops::DerefMut;
 
 const IMAGE_SECTOR_SIZE: usize = 512;

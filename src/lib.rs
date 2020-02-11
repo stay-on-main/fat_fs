@@ -1,3 +1,5 @@
+#![no_std]
+
 pub mod storage;
 pub mod table;
 pub mod storage_io;
@@ -72,35 +74,36 @@ impl <T: StorageIo> Fs <T> {
         let count_of_clusters = data_sec / sectors_in_cluster;
 
         let fat_type = if count_of_clusters < 4085 { 
-            println!("FAT12");
+            //println!("FAT12");
             // fat 12 not supported
             #[cfg(feature = "fat12_disable")]
             return Err(false); 
             FatType::Fat12
         } else if count_of_clusters < 65525 {
-            println!("FAT16");
+            //println!("FAT16");
             #[cfg(feature = "fat16_disable")]
             return Err(false); 
             FatType::Fat16
         } else {     
-            println!("FAT32");
+            //println!("FAT32");
             #[cfg(feature = "fat32_disable")]
             return Err(false); 
             FatType::Fat32
         };
-        
+        /*
         println!("sector_size: {}", sector_size);
         println!("sectors_in_cluster: {}", sectors_in_cluster);
         println!("root_dir_sectors: {}", root_dir_sectors);
         println!("reserved_sectors_count: {}", reserved_sectors_count);
         println!("num_fats: {}", num_fats);
         println!("fat_size: {}", fat_size);
-
+        */
         let root_directory_first_sector = reserved_sectors_count + (num_fats * fat_size);
         let data_area_first_sector = root_directory_first_sector + root_dir_sectors;
+        /*
         println!("root_directory_first_sector {}", root_directory_first_sector);
         println!("data_area_first_sector {}", data_area_first_sector);
-
+        */
 
         let root_cluster = match fat_type {
             FatType::Fat32 => u32_from_bytes(&bpb[44..]),
@@ -157,7 +160,7 @@ impl <T: StorageIo> Fs <T> {
 
             for sub_dir_entry in Dir::new(self, dir_entry.cluster) {
                 //print!("compare: ");
-                print_str(sub_dir_entry.name());
+                //print_str(sub_dir_entry.name());
 
                 if sub_dir_entry.compare(x) {
                     dir_entry = sub_dir_entry;
@@ -187,7 +190,7 @@ impl <T: StorageIo> Fs <T> {
         }
     }
 }
-
+/*
 fn print_str(s: &[u8]) {
     for c in s {
         print!("{}", *c as char);
@@ -195,3 +198,4 @@ fn print_str(s: &[u8]) {
 
     println!();
 }
+*/

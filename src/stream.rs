@@ -1,7 +1,7 @@
 use super::Fs;
 use super::storage_io::StorageIo;
-use crate::fs::storage::StorageRead;
-use crate::fs::storage::StorageWrite;
+use crate::storage::StorageRead;
+use crate::storage::StorageWrite;
 use super::table::FatValue;
 use core::ops::DerefMut;
 

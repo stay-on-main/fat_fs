@@ -9,13 +9,13 @@ pub struct DirEntry {
     pub size: u32,
 }
 
-const ATTR_READ_ONLY: u8 = 0x01;
-const ATTR_HIDDEN: u8 = 0x02;
-const ATTR_SYSTEM: u8 = 0x04;
-const ATTR_VOLUME_ID: u8 = 0x08;
+//const ATTR_READ_ONLY: u8 = 0x01;
+//const ATTR_HIDDEN: u8 = 0x02;
+//const ATTR_SYSTEM: u8 = 0x04;
+//const ATTR_VOLUME_ID: u8 = 0x08;
 const ATTR_DIRECTORY: u8 = 0x10;
-const ATTR_ARCHIVE: u8 = 0x20;
-const ATTR_LONG_FILE_NAME: u8 = 0x0f;
+//const ATTR_ARCHIVE: u8 = 0x20;
+//const ATTR_LONG_FILE_NAME: u8 = 0x0f;
 
 impl DirEntry{
     pub fn root(cluster: u32) -> Self {

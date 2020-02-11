@@ -3,13 +3,13 @@ use super::storage_io::StorageIo;
 use super::Fs;
 use super::dir_entry::DirEntry;
 
-const ATTR_READ_ONLY: u8 = 0x01;
-const ATTR_HIDDEN: u8 = 0x02;
-const ATTR_SYSTEM: u8 = 0x04;
+//const ATTR_READ_ONLY: u8 = 0x01;
+//const ATTR_HIDDEN: u8 = 0x02;
+//const ATTR_SYSTEM: u8 = 0x04;
 const ATTR_VOLUME_ID: u8 = 0x08;
 const ATTR_DIRECTORY: u8 = 0x10;
-const ATTR_ARCHIVE: u8 = 0x20;
-const ATTR_LONG_FILE_NAME: u8 = 0x0f;
+//const ATTR_ARCHIVE: u8 = 0x20;
+//const ATTR_LONG_FILE_NAME: u8 = 0x0f;
 
 pub struct Dir <'a, T: StorageIo> {
     stream: Stream<'a, T>,
@@ -64,7 +64,7 @@ impl <'a, T: StorageIo> Iterator for Dir<'a, T> {
                 if last_lfn {
                     lfn_checksum = data[LDIR_CHKSUM];
                 } else if lfn_checksum != data[LDIR_CHKSUM] || (data[0] + 1 ) != lfn_num {
-                    println!("Lfn corrupted part");
+                    //println!("Lfn corrupted part");
                     lfn_num = 0;
                     continue;
                 }
@@ -84,7 +84,7 @@ impl <'a, T: StorageIo> Iterator for Dir<'a, T> {
                         if last_lfn {
                             lfn_len = lfn_offset + i;
                         } else {
-                            println!("Lfn corrupted part");
+                            //println!("Lfn corrupted part");
                             lfn_num = 0;
                         }
                         break;
@@ -206,7 +206,7 @@ const LDIR_CHKSUM: usize = 13;
 const DELETED_DIR_ENTRY: u8 = 0xE5;
 const NO_MORE_DIR_ENTRY: u8 = 0x00;
 
-const DIR_ENTRY_SIZE: usize = 32;
+//const DIR_ENTRY_SIZE: usize = 32;
 
 const LFN_OFFSETS: [usize; 13] = [1, 3, 5, 7, 9, 14, 16, 18, 20, 22, 24, 28, 30];
 
@@ -219,7 +219,7 @@ fn checksum(buf: &[u8]) -> u8 {
     }
     res
 }
-
+/*
 fn print_str(s: &[u8]) {
     for c in s {
         print!("{}", *c as char);
@@ -227,3 +227,4 @@ fn print_str(s: &[u8]) {
 
     println!();
 }
+*/
