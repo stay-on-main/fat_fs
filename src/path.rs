@@ -4,11 +4,15 @@ pub struct Path<'a> {
 }
 
 impl <'a> Path<'a> {
-    pub fn new(path: &str) -> Path {
+    pub fn new(path: &[u8]) -> Path {
         Path {
-            path: path.as_bytes(),
+            path: path,
             pos: 0,
         }
+    }
+
+    pub fn is_end(&self) -> bool {
+        self.pos + 1 >= self.path.len()
     }
 }
 

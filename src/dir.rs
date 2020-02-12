@@ -2,7 +2,8 @@ use super::stream::Stream;
 use super::storage_io::StorageIo;
 use super::Fs;
 use super::dir_entry::DirEntry;
-
+use super::file::File;
+use super::path::Path;
 //const ATTR_READ_ONLY: u8 = 0x01;
 //const ATTR_HIDDEN: u8 = 0x02;
 //const ATTR_SYSTEM: u8 = 0x04;
@@ -12,15 +13,76 @@ const ATTR_DIRECTORY: u8 = 0x10;
 //const ATTR_LONG_FILE_NAME: u8 = 0x0f;
 
 pub struct Dir <'a, T: StorageIo> {
-    stream: Stream<'a, T>,
+    fs: &'a Fs<T>,
+    cluster: u32,
 }
 
 impl <'a, T: StorageIo> Dir<'a, T> {
     pub fn new(fs: &'a Fs<T>, cluster: u32) -> Self {
         Dir {
-            stream: Stream::new(fs, cluster, cluster == 0),
+            fs, cluster
         }
     }
+
+    pub fn iter(&'a self) -> DirIterator<'a, T> {
+        DirIterator {
+            stream: Stream::new(self.fs, self.cluster, self.cluster == 0),
+        }
+    }
+
+    pub fn file_open(&'a self, path: &[u8]) -> Result<File<'a, T>, bool> {
+        let entry = self.entry_find(path)?;
+
+        if entry.is_file() {
+            return Ok(File::new(Stream::new(self.fs, entry.cluster, false), entry.size));
+        }
+
+        Err(false)
+    }
+
+    pub fn dir_open(&'a self, path: &[u8]) -> Result<Self, bool> {
+        let entry = self.entry_find(path)?;
+
+        if entry.is_dir() {
+            return Ok(Dir::new(self.fs, entry.cluster));
+        }
+
+        Err(false)
+    }
+
+    pub fn entry_find(&self, path: &[u8]) -> Result<DirEntry, bool> {
+        let mut current_dir = Dir::new(self.fs, self.cluster);
+        let mut path = Path::new(path);
+
+        while let Some(entry_name) = path.next() {
+            let mut found = false;
+
+            for entry in current_dir.iter() {
+                if entry.compare(entry_name) {
+                    if path.is_end() {
+                        return Ok(entry);
+                    }
+
+                    if entry.is_dir() {
+                        current_dir = Dir::new(self.fs, entry.cluster);
+                        found = true;
+                    }
+
+                    break;
+                }
+            }
+
+            if found == false {
+                return Err(false);
+            }
+        }
+        
+        Err(false)
+    }
+}
+
+pub struct DirIterator <'a, T: StorageIo> {
+    stream: Stream<'a, T>,
 }
 
 fn byte_to_lowercase(byte: u8) -> u8 {
@@ -31,7 +93,9 @@ fn byte_to_lowercase(byte: u8) -> u8 {
     }
 }
 
-impl <'a, T: StorageIo> Iterator for Dir<'a, T> {
+
+
+impl <'a, T: StorageIo> Iterator for DirIterator<'a, T> {
     type Item = DirEntry;
 
     fn next(&mut self) -> Option<Self::Item> {

@@ -10,3 +10,9 @@ autoexamples = true
 
 [dependencies]
 
+[features]
+fs_read_only = []
+
+fat32_disable = []
+fat16_disable = []
+fat12_disable = []
